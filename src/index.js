@@ -1,11 +1,11 @@
+import 'simplelightbox/dist/simple-lightbox.min.css';
+
 import Notiflix from 'notiflix';
 import axios from 'axios';
 import SimpleLightbox from 'simplelightbox';
-import 'simplelightbox/dist/simple-lightbox.min.css';
+
 
 const formRef = document.querySelector('form');
-const inputRef = document.querySelector('input');
-const buttonSubmitRef = document.querySelector('button[type=submit]');
 const buttonLoadMoreRef = document.querySelector('.load-more');
 const boxImgRef = document.querySelector('div');
 
@@ -38,8 +38,12 @@ async function onSubmitSearch(evt) {
 await fetchSearchRequest(searchInput, page).then(data=>{
     totalHits = data.totalHits;
     Notiflix.Notify.success(`Hooray! We found ${totalHits} images.`);
-    requestGallery = searchMarkup(data);
+    console.log(data.hits)
+    requestGallery = searchMarkup(data.hits);
     lightboxMarkup(requestGallery);
+  
+
+    
 }).catch(err=>console.log(err))
 }
 
@@ -70,13 +74,11 @@ async function fetchSearchRequest(searchInput, page) {
 }
 
 function searchMarkup(images) {
-  console.log(images.hits);
-  const markup = images.hits
-    .map(image => {
-      return `<a class="gallery__item" href="${image.largeImageURL}">
-      <div class="photo-card">
-
-            <img src="${image.webformatURL}" alt="${image.tags}" loading="lazy" />
+    
+  return images.map(image => {
+      return `
+      <div class="photo-card"><a class="gallery__item" href="${image.largeImageURL}">
+            <img class="gallery__image" src="${image.webformatURL}" alt="${image.tags}" loading="lazy" width="300px" />
             <div class="info">
               <p class="info-item">
                 <b>Likes</b>
@@ -95,10 +97,10 @@ function searchMarkup(images) {
                 ${image.downloads}
               </p>
             </div>
-          </div></a>`;
+            </a></div>`
     })
     .join('');
-  boxImgRef.insertAdjacentHTML('beforeend', markup);
+//   boxImgRef.insertAdjacentHTML('beforeend', markup);
 }
 
 function clearMarkup() {
@@ -125,9 +127,11 @@ function clearMarkup() {
   }
   
 async function onLoadMoreButton(evt) {
+    
     page += 1;
   await fetchSearchRequest(searchInput, page).then(data =>{
-     requestGallery = searchMarkup(data);
+     requestGallery = searchMarkup(data.hits);
+     
      lightboxMarkup(requestGallery);
      totalPages = data.totalHits / perPage;
      if (page > totalPages) {
@@ -135,6 +139,7 @@ async function onLoadMoreButton(evt) {
       Notiflix.Notify.info(
         "We're sorry, but you've reached the end of search results."
       );
+      
       return
     }
   
@@ -142,4 +147,5 @@ async function onLoadMoreButton(evt) {
   
   //   searchRequest(searchInput);
   }
+  
   
