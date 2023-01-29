@@ -27,25 +27,26 @@ const boxImageRef = document.querySelector('.gallery');
 const inputRef = document.querySelector('input');
 const boxGuardRef = document.querySelector('.js-guard');
 
+let inputSearch;
+
 formRef.addEventListener('submit', onSubmitForm);
-inputRef.addEventListener('input', onInput);
+
 
 function onSubmitForm(e) {
+  
+clearInput();
+inputSearch = inputRef.value.trim();
+if (!inputSearch){
+  return;
+}
   e.preventDefault();
   page = 1;
-  getData(inputRef.value, page);
-}
-
-function onInput(e) {
-  if (e.target.value) {
-    boxImageRef.innerHTML = '';
-  }
+  getData(inputSearch, page);
 }
 
 async function getData(query, page) {
   try {
     const data = await fetchImages(query, page);
-    // console.log(data);
     renderImages(data);
     gallery.refresh();
     observer.observe(boxGuardRef);
@@ -135,5 +136,8 @@ function notificationsForCustomer(arrOfImages, totalHits) {
   }
 }
 
+function clearInput(){
+  boxImageRef.innerHTML="";
+}
 
 
