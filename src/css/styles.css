@@ -36,11 +36,7 @@
   text-align: center;
   margin-top: 20px;
 }
-.load-more {
-  text-align: center;
-  margin: auto;
-  padding: 10px 32px;
-}
+
 
 .gallery__image:hover {
   transform: scale(1.03);
